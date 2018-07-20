@@ -1,0 +1,9 @@
+package: chess
+import:
+- package: github.com/gorilla/mux
+- package: github.com/gorilla/websocket
+- package: github.com/notnil/chess
+testImport:
+- package: github.com/stretchr/testify
+  subpackages:
+  - assert
