@@ -1,12 +1,12 @@
 package broker
 
 import (
-	"chess/game"
-	"chess/game/client"
-	"chess/game/server"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"game"
+	"game/client"
+	"game/server"
 	"log"
 	"sync"
 	"time"
@@ -65,9 +65,9 @@ func New(timeout time.Duration) *Broker {
 	}
 }
 
-func (b *Broker) NewGame(name string, moveTimeout time.Duration) *server.Server {
+func (b *Broker) NewGame(name string, moveTimeout time.Duration, adminColor string) *server.Server {
 	srvC := make(game.MessageChannel)
-	srv := server.New(name, moveTimeout, srvC)
+	srv := server.New(name, moveTimeout, srvC, adminColor)
 	srv.Start()
 
 	b.games[srv.ID] = srv
@@ -198,6 +198,7 @@ func handleWebsocketTraffic(clnt *client.Client, conn *websocket.Conn) {
 			var payload JoinAdminPayload
 			err := json.Unmarshal(msg.Payload, &payload)
 			if err != nil {
+				fmt.Println("err", err)
 				handleWebsocketError(err, conn)
 				continue
 			}

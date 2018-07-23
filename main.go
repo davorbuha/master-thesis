@@ -1,13 +1,11 @@
 package main
 
 import (
-	"chess/broker"
-	"chess/game"
+	"broker"
 	"encoding/json"
-	"fmt"
+	"game"
 	"log"
 	"net/http"
-	"os"
 	"strconv"
 	"time"
 
@@ -26,27 +24,26 @@ var upgrader = websocket.Upgrader{
 }
 
 func main() {
-	port := os.Getenv("PORT")
 	brkr = broker.New(5 * time.Minute)
 	router := mux.NewRouter()
-	router.HandleFunc("/create_game/{name}/move_time/{moveTime}", handleCreateGame) //at least POST
+	router.HandleFunc("/create_game/{name}/move_time/{moveTime}/admin_color/{adminColor}", handleCreateGame) //at least POST
 	router.HandleFunc("/close_game/{id}/admin_token/{adminToken}", handleCloseGame)
 	router.HandleFunc("/game_events", handleGameEventsConnections)
 	router.HandleFunc("/join_game/{id}", handleJoinGameConnections)
-	fmt.Printf("Hello heroku on port %v\n", port)
-	http.ListenAndServe(":"+port, router)
+	http.ListenAndServe(":8080", router)
 }
 
 func handleCreateGame(w http.ResponseWriter, r *http.Request) {
 	mvars := mux.Vars(r)
 	name := mvars["name"]
+	adminColor := mvars["adminColor"]
 	moveTime, err := strconv.Atoi(mvars["moveTime"])
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	g := brkr.NewGame(name, time.Duration(moveTime)*time.Second)
+	g := brkr.NewGame(name, time.Duration(moveTime)*time.Second, adminColor)
 
 	err = writeJsonResponse(w, struct {
 		GameID     game.GameID     `json:"id"`

@@ -1,9 +1,10 @@
 package server
 
 import (
-	"chess/game"
-	"chess/subpub"
 	"errors"
+	"fmt"
+	"game"
+	"subpub"
 	"time"
 
 	"github.com/notnil/chess"
@@ -11,6 +12,7 @@ import (
 
 var uniqueGameId game.GameID = 0
 
+//timeout const
 const defaultSetupTimeout = 5 * time.Minute
 
 // func (p PlayerWithMessageChannel) Notify(event subpub.Event) {
@@ -33,9 +35,10 @@ type Server struct {
 	FEN          string
 	Started      bool
 	subpub       *subpub.SubPub
+	AdminColor   string
 }
 
-func New(name string, timeout time.Duration, serverC game.MessageChannel) *Server {
+func New(name string, timeout time.Duration, serverC game.MessageChannel, adminColor string) *Server {
 	uniqueGameId++
 
 	return &Server{
@@ -48,6 +51,7 @@ func New(name string, timeout time.Duration, serverC game.MessageChannel) *Serve
 		moveTimeout:  timeout,
 		setupTimeout: defaultSetupTimeout,
 		Started:      false,
+		AdminColor:   adminColor,
 	}
 }
 
@@ -169,11 +173,13 @@ func (srv *Server) startWithGame() stateFn {
 }
 
 func (srv *Server) JoinPlayerTwo(player game.Player) error {
-	if player.Color == game.PieceColor(1) && srv.PlayerBlack.C == nil {
+	if srv.PlayerBlack.C == nil {
+		player.Color = 0
 		srv.PlayerBlack = player
 		return nil
 	}
-	if player.Color == game.PieceColor(2) && srv.PlayerWhite.C == nil {
+	if srv.PlayerWhite.C == nil {
+		player.Color = 1
 		srv.PlayerWhite = player
 		return nil
 	}
@@ -182,13 +188,13 @@ func (srv *Server) JoinPlayerTwo(player game.Player) error {
 
 func (srv *Server) waitForPlayerTwo() stateFn {
 	srv.StateStr = "waitForPlayerTwo"
-	timer := time.NewTimer(srv.setupTimeout)
+	// timer := time.NewTimer(srv.setupTimeout)
 
 	for {
 		select {
-		case <-timer.C:
-			srv.B <- game.BroadcastMessage{Type: "game.timeout"}
-			return nil
+		// case <-timer.C:
+		// 	srv.B <- game.BroadcastMessage{Type: "game.timeout"}
+		// 	return nil
 
 		case msg := <-srv.C:
 			cmd, ok := msg.(game.CommandJoinPlayer)
@@ -206,7 +212,7 @@ func (srv *Server) waitForPlayerTwo() stateFn {
 				}
 				continue
 			}
-
+			fmt.Println("srvvv", srv)
 			cmd.ReplayC <- game.MessageCommandReply{
 				Status: game.CommandOK,
 			}
@@ -222,7 +228,7 @@ func (srv *Server) JoinAdmin(player game.Player, token game.AdminToken) error {
 		return game.ErrWrongAdminToken
 	}
 
-	if player.Color == game.PieceColor(1) {
+	if player.Color == game.PieceColor(0) {
 		srv.PlayerBlack = player
 		return nil
 	} else {

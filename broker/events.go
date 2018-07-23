@@ -1,8 +1,8 @@
 package broker
 
 import (
-	"chess/game"
-	"chess/game/server"
+	"game"
+	"game/server"
 )
 
 type GameEvent struct {
@@ -14,11 +14,13 @@ func buildGameCreatedEvent(g *server.Server) GameEvent {
 	return GameEvent{
 		Type: "game.created",
 		Payload: struct {
-			ID   game.GameID `json:"id"`
-			Name string      `json:"name"`
+			ID         game.GameID `json:"id"`
+			Name       string      `json:"name"`
+			AdminColor string      `json:"admin_color"`
 		}{
 			g.ID,
 			g.Name,
+			g.AdminColor,
 		},
 	}
 }

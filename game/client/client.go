@@ -1,7 +1,7 @@
 package client
 
 import (
-	"chess/game"
+	"game"
 	"errors"
 
 	"github.com/gorilla/websocket"

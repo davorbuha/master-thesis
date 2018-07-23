@@ -1,6 +1,8 @@
 package game
 
-import "github.com/notnil/chess"
+import (
+	"github.com/notnil/chess"
+)
 
 // type Command interface {
 // 	isCommand()
