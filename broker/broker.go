@@ -1,12 +1,12 @@
 package broker
 
 import (
+	"chess/game"
+	"chess/game/client"
+	"chess/game/server"
 	"encoding/json"
 	"errors"
 	"fmt"
-	"game"
-	"game/client"
-	"game/server"
 	"log"
 	"sync"
 	"time"

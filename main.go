@@ -1,9 +1,9 @@
 package main
 
 import (
-	"broker"
+	"chess/broker"
+	"chess/game"
 	"encoding/json"
-	"game"
 	"log"
 	"net/http"
 	"strconv"

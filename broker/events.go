@@ -1,8 +1,8 @@
 package broker
 
 import (
-	"game"
-	"game/server"
+	"chess/game"
+	"chess/game/server"
 )
 
 type GameEvent struct {

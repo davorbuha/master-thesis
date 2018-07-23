@@ -1,8 +1,8 @@
 package server
 
 import (
-	"game"
-	"game/client"
+	"chess/game"
+	"chess/game/client"
 	"fmt"
 	"testing"
 	"time"

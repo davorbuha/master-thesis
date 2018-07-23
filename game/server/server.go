@@ -1,10 +1,10 @@
 package server
 
 import (
-	"errors"
+	"chess/errors"
+	"chess/game"
+	"chess/subpub"
 	"fmt"
-	"game"
-	"subpub"
 	"time"
 
 	"github.com/notnil/chess"
