@@ -1,9 +1,9 @@
 package server
 
 import (
-	"chess/errors"
 	"chess/game"
 	"chess/subpub"
+	"errors"
 	"fmt"
 	"time"
 
