@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"os"
 	"strconv"
 	"time"
 
@@ -30,7 +31,7 @@ func main() {
 	router.HandleFunc("/close_game/{id}/admin_token/{adminToken}", handleCloseGame)
 	router.HandleFunc("/game_events", handleGameEventsConnections)
 	router.HandleFunc("/join_game/{id}", handleJoinGameConnections)
-	http.ListenAndServe(":8080", router)
+	http.ListenAndServe(":"+os.Getenv("PORT"), router)
 }
 
 func handleCreateGame(w http.ResponseWriter, r *http.Request) {
